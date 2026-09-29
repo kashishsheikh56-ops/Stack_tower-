@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Tower - Data Structure Game</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game {
+            width: 90%;
+            max-width: 850px;
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        h1 {
+            color: #5b3cc4;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-around;
+            background: #f3f0ff;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            font-weight: bold;
+            color: #4b3295;
+        }
+
+        .tower-area {
+            height: 400px;
+            background: #f7f7ff;
+            border: 3px solid #ddd;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .tower {
+            width: 220px;
+            min-height: 30px;
+            border-left: 8px solid #555;
+            border-right: 8px solid #555;
+            border-bottom: 8px solid #555;
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .block {
+            width: 190px;
+            height: 45px;
+            margin: 3px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            animation: drop 0.3s ease;
+        }
+
+        .block:nth-child(odd) {
+            background: #ff6b6b;
+        }
+
+        .block:nth-child(even) {
+            background: #4dabf7;
+        }
+
+        @keyframes drop {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 25px;
+            margin: 5px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .push {
+            background: #4caf50;
+            color: white;
+        }
+
+        .pop {
+            background: #ff5252;
+            color: white;
+        }
+
+        .reset {
+            background: #555;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #555;
+            min-height: 25px;
+        }
+
+        .concept {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff8e1;
+            border-radius: 12px;
+            color: #6d5700;
+        }
+
+        @media (max-width: 600px) {
+            .tower-area {
+                height: 350px;
+            }
+
+            .tower {
+                width: 170px;
+            }
+
+            .block {
+                width: 145px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game">
+
+        <h1>🏗️ Stack Tower</h1>
+        <p class="subtitle">
+            Build the tower using Stack Operations!
+        </p>
+
+        <div class="info">
+            <div class="info-box">
+                Blocks: <span id="count">0</span>
+            </div>
+
+            <div class="info-box">
+                Score: <span id="score">0</span>
+            </div>
+        </div>
+
+        <div class="tower-area">
+            <div class="tower" id="tower"></div>
+        </div>
+
+        <div class="controls">
+            <button class="push" onclick="pushBlock()">
+                ➕ PUSH
+            </button>
+
+            <button class="pop" onclick="popBlock()">
+                ➖ POP
+            </button>
+
+            <button class="reset" onclick="resetGame()">
+                🔄 RESET
+            </button>
+        </div>
+
+        <div class="message" id="message">
+            Start building your tower!
+        </div>
+
+        <div class="concept">
+            <strong>📚 Stack Concept:</strong><br>
+            Stack follows <b>LIFO</b> —
+            Last In, First Out.
+        </div>
+
+    </div>
+
+    <script>
+
+        let stack = [];
+        let score = 0;
+
+        function pushBlock() {
+
+            if (stack.length >= 7) {
+                document.getElementById("message").innerText =
+                    "🏆 Tower is full! Great job!";
+                return;
+            }
+
+            let blockNumber = stack.length + 1;
+
+            stack.push(blockNumber);
+
+            score += 10;
+
+            updateTower();
+
+            document.getElementById("message").innerText =
+                "PUSH: Block " + blockNumber + " added to the top!";
+        }
+
+
+        function popBlock() {
+
+            if (stack.length === 0) {
+                document.getElementById("message").innerText =
+                    "⚠️ Stack is empty!";
+                return;
+            }
+
+            let removedBlock = stack.pop();
+
+            score += 5;
+
+            updateTower();
+
+            document.getElementById("message").innerText =
+                "POP: Block " + removedBlock + " removed from the top!";
+        }
+
+
+        function updateTower() {
+
+            let tower = document.getElementById("tower");
+
+            tower.innerHTML = "";
+
+            stack.forEach(function(block) {
+
+                let newBlock = document.createElement("div");
+
+                newBlock.className = "block";
+
+                newBlock.innerText = "Block " + block;
+
+                tower.appendChild(newBlock);
+
+            });
+
+            document.getElementById("count").innerText =
+                stack.length;
+
+            document.getElementById("score").innerText =
+                score;
+        }
+
+
+        function resetGame() {
+
+            stack = [];
+            score = 0;
+
+            updateTower();
+
+            document.getElementById("message").innerText =
+                "🔄 Game reset! Start building again.";
+        }
+
+    </script>
+
+</body>
+</html>9
